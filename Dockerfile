@@ -20,7 +20,9 @@ RUN apt-get update
 RUN apt-get -y install \
     build-essential \
     curl \
+    ghostscript \
     git-core \
+    imagemagick \
     libcurl4-openssl-dev \
     libreadline-dev \
     libssl-dev \
