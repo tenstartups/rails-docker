@@ -21,7 +21,7 @@ RUN apt-get -y install \
     build-essential \
     curl \
     ghostscript \
-    git-core \
+    git \
     imagemagick \
     libcurl4-openssl-dev \
     libreadline-dev \
@@ -31,6 +31,7 @@ RUN apt-get -y install \
     libxslt1-dev \
     libyaml-dev \
     mysql-client \
+    nano \
     python \
     python-dev \
     python-pip \
