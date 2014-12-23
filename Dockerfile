@@ -11,6 +11,7 @@ MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 
 # Set environment.
 ENV DEBIAN_FRONTEND noninteractive
+ENV TERM xterm
 
 # Define working directory.
 WORKDIR /tmp
