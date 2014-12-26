@@ -19,30 +19,30 @@ WORKDIR /tmp
 # Install base packages.
 RUN apt-get update
 RUN apt-get -y install \
-    build-essential \
-    curl \
-    daemontools \
-    ghostscript \
-    git \
-    imagemagick \
-    libcurl4-openssl-dev \
-    libffi-dev \
-    libreadline-dev \
-    libssl-dev \
-    libsqlite3-dev \
-    libxml2-dev \
-    libxslt1-dev \
-    libyaml-dev \
-    mysql-client \
-    nano \
-    python \
-    python-dev \
-    python-pip \
-    python-software-properties \
-    python-virtualenv \
-    sqlite3 \
-    wget \
-    zlib1g-dev
+  build-essential \
+  curl \
+  daemontools \
+  ghostscript \
+  git \
+  imagemagick \
+  libcurl4-openssl-dev \
+  libffi-dev \
+  libreadline6-dev \
+  libssl-dev \
+  libsqlite3-dev \
+  libxml2-dev \
+  libxslt1-dev \
+  libyaml-dev \
+  mysql-client \
+  nano \
+  python \
+  python-dev \
+  python-pip \
+  python-software-properties \
+  python-virtualenv \
+  sqlite3 \
+  wget \
+  zlib1g-dev
 
 # Add postgresql client from official source.
 RUN \
