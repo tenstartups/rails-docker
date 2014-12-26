@@ -48,7 +48,7 @@ RUN \
   wget https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
   apt-key add ACCC4CF8.asc && \
   apt-get update && \
-  apt-get -y install libpq-dev postgresql-client-9.3 postgresql-contrib-9.3
+  apt-get -y install libpq-dev postgresql-client-9.4 postgresql-contrib-9.4
 
 # Compile node from source.
 RUN \
@@ -64,7 +64,7 @@ RUN \
 
 # Compile ruby from source.
 RUN \
-  wget http://ftp.ruby-lang.org/pub/ruby/2.1/ruby-2.1.5.tar.gz && \
+  wget http://ftp.ruby-lang.org/pub/ruby/2.2/ruby-2.2.0.tar.gz && \
   tar -xzvf ruby-*.tar.gz && \
   rm -f ruby-*.tar.gz && \
   cd ruby-* && \
