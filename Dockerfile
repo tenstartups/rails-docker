@@ -21,10 +21,12 @@ RUN apt-get update
 RUN apt-get -y install \
     build-essential \
     curl \
+    daemontools \
     ghostscript \
     git \
     imagemagick \
     libcurl4-openssl-dev \
+    libffi-dev \
     libreadline-dev \
     libssl-dev \
     libsqlite3-dev \
