@@ -87,7 +87,7 @@ RUN gem install awesome_print bundler rails rubygems-update --no-ri --no-rdoc
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Add files to the image
-COPY ./entrypoint /root/
+COPY ./init-home /root/
 
 # Define working directory.
 WORKDIR /usr/src/app
@@ -96,4 +96,4 @@ WORKDIR /usr/src/app
 VOLUME ["/home/rails"]
 
 # Define the entrypoint
-ENTRYPOINT ["/root/entrypoint"]
+ENTRYPOINT ["/root/init-home"]
