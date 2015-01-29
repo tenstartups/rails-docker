@@ -12,6 +12,8 @@ MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 # Set environment.
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
+ENV HOME /home/rails
+ENV PSQL_HISTORY /home/rails/.psql_history
 ENV BUNDLE_PATH /var/lib/bundle
 
 # Define working directory.
@@ -78,10 +80,19 @@ RUN \
   rm -rf ruby-*
 
 # Install ruby gems.
-RUN gem install bundler rails rubygems-update --no-ri --no-rdoc
+RUN gem install awesome_print bundler rails rubygems-update --no-ri --no-rdoc
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Add files to the image
+COPY ./entrypoint /root/
+
 # Define working directory.
 WORKDIR /usr/src/app
+
+# Define volumes.
+VOLUME ["/home/rails"]
+
+# Define the entrypoint
+ENTRYPOINT ["/root/entrypoint"]

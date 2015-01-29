@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Prepare home directory files
+mkdir -p "${HOME}"
+cp /root/.bashrc "${HOME}/"
+cp /root/.profile "${HOME}/"
+cat > "${HOME}/.irbrc" << EOF
+require 'awesome_print'
+AwesomePrint.irb!
+IRB.conf[:SAVE_HISTORY] = 100
+IRB.conf[:HISTORY_FILE] = "#{ENV['HOME']}/.irb-history"
+EOF
+
+# Prepare the psql history file
+mkdir -p `dirname "${PSQL_HISTORY}"`
+touch "${PSQL_HISTORY}"
+
+exec $@
