@@ -28,6 +28,7 @@ RUN apt-get -y install \
   ghostscript \
   git \
   imagemagick \
+  graphviz \
   libcurl4-openssl-dev \
   libffi-dev \
   libreadline6-dev \
