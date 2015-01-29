@@ -12,7 +12,7 @@ MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 # Set environment.
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
-ENV BUNDLE_PATH /var/lib/bundler
+ENV BUNDLE_PATH /var/lib/bundle
 
 # Define working directory.
 WORKDIR /tmp
