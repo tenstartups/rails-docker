@@ -86,4 +86,4 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 WORKDIR /usr/src/app
 
 # Define mountable directories.
-VOLUME ["/usr/src/app"]
+VOLUME ["/usr/src/app/.sass-cache", "/usr/src/app/log", "/usr/src/app/tmp"]
