@@ -83,7 +83,7 @@ RUN gem install bundler rubygems-update --no-ri --no-rdoc
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Define working directory.
-WORKDIR /data
+WORKDIR /usr/src/app
 
 # Define mountable directories.
-VOLUME ["/data"]
+VOLUME ["/usr/src/app"]
