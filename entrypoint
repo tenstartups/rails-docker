@@ -18,4 +18,10 @@ cp -n /root/.profile "${HOME}/"
 mkdir -p `dirname "${PSQL_HISTORY}"`
 touch "${PSQL_HISTORY}"
 
+# Create symlinks for log and tmp directories
+rm -rf log
+ln -nfs /var/log/rails log
+rm -rf tmp
+ln -nfs /tmp/rails tmp
+
 exec $@

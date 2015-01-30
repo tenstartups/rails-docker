@@ -16,9 +16,6 @@ ENV HOME /home/rails
 ENV PSQL_HISTORY /home/rails/.psql_history
 ENV BUNDLE_PATH /var/lib/bundle
 
-# Define working directory.
-WORKDIR /tmp
-
 # Install base packages.
 RUN apt-get update
 RUN apt-get -y install \
@@ -50,6 +47,7 @@ RUN apt-get -y install \
 
 # Add postgresql client from official source.
 RUN \
+  cd /tmp && \
   echo "deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
   wget https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
   apt-key add ACCC4CF8.asc && \
@@ -58,6 +56,7 @@ RUN \
 
 # Compile node from source.
 RUN \
+  cd /tmp && \
   wget http://nodejs.org/dist/node-latest.tar.gz && \
   tar xvzf node-*.tar.gz && \
   rm -f node-*.tar.gz && \
@@ -70,6 +69,7 @@ RUN \
 
 # Compile ruby from source.
 RUN \
+  cd /tmp && \
   wget http://ftp.ruby-lang.org/pub/ruby/2.2/ruby-2.2.0.tar.gz && \
   tar -xzvf ruby-*.tar.gz && \
   rm -f ruby-*.tar.gz && \
@@ -87,13 +87,13 @@ RUN gem install awesome_print bundler rails rubygems-update --no-ri --no-rdoc
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Add files to the image
-COPY ./init-home /root/
+ADD . /opt/rails
 
 # Define working directory.
-WORKDIR /usr/src/app
+WORKDIR /opt/rails
 
 # Define volumes.
-VOLUME ["/home/rails"]
+VOLUME ["/home/rails", "/var/log/rails", "/tmp/rails"]
 
 # Define the entrypoint
-ENTRYPOINT ["/root/init-home"]
+ENTRYPOINT ["./entrypoint"]
