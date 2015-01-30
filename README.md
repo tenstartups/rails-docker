@@ -1,2 +1,2 @@
-railsapp-baseimage-docker
-=========================
+rails-docker
+============

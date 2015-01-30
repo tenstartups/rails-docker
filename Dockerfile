@@ -90,10 +90,10 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 ADD . /opt/rails
 
 # Define working directory.
-WORKDIR /opt/rails
+WORKDIR /usr/src/app
 
 # Define volumes.
 VOLUME ["/home/rails", "/var/log/rails", "/tmp/rails"]
 
 # Define the entrypoint
-ENTRYPOINT ["./entrypoint"]
+ENTRYPOINT ["/opt/rails/entrypoint"]
