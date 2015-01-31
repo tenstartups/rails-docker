@@ -25,11 +25,5 @@ ln -nfs /var/log/rails log
 mkdir -p /var/tmp/rails
 rm -rf tmp
 ln -nfs /tmp/rails tmp
-mkdir -p /tmp/rails/.bundle
-rm -rf .bundle
-ln -nfs /tmp/rails/.bundle .bundle
-mkdir -p /tmp/rails/.sass-cache
-rm -rf .sass-cache
-ln -nfs /tmp/rails/.sass-cache .sass-cache
 
 exec $@

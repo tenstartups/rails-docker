@@ -14,7 +14,6 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 ENV HOME /home/rails
 ENV PSQL_HISTORY /home/rails/.psql_history
-ENV BUNDLE_PATH /var/lib/bundle
 
 # Install base packages.
 RUN apt-get update
