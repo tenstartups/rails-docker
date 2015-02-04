@@ -80,19 +80,34 @@ RUN \
   rm -rf ruby-*
 
 # Install ruby gems.
-RUN gem install awesome_print bundler rails rubygems-update --no-ri --no-rdoc
+RUN gem install awesome_print bundler rubygems-update --no-ri --no-rdoc
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Add files to the image
-ADD . /opt/rails
+# Add files.
+COPY entrypoint /usr/local/bin/rails-docker-entrypoint
+
+# Define volumes.
+VOLUME ["/home/rails", "/etc/rails", "/var/lib/rails", "/var/www/railsapp", "/var/log/rails", "/tmp/rails"]
+
+# Define the entrypoint
+ENTRYPOINT ["/usr/local/bin/rails-docker-entrypoint"]
+
+# Copy the Gemfile into place and bundle.
+ONBUILD ADD Gemfile /usr/src/app/Gemfile
+ONBUILD ADD Gemfile.lock /usr/src/app/Gemfile.lock
+ONBUILD RUN echo "gem: --no-ri --no-rdoc" > ${HOME}/.gemrc
+ONBUILD RUN bundle install --without development test --deployment
+
+# Copy the rest of the application into place.
+ONBUILD ADD . /usr/src/app
 
 # Define working directory.
 WORKDIR /usr/src/app
 
-# Define volumes.
-VOLUME ["/home/rails", "/var/log/rails", "/tmp/rails"]
-
-# Define the entrypoint
-ENTRYPOINT ["/opt/rails/entrypoint"]
+# Dump out the git revision.
+ONBUILD RUN \
+  mkdir -p ./.git/objects && \
+  echo "$(git rev-parse HEAD)" > ./build-info.txt && \
+  rm -rf ./.git
