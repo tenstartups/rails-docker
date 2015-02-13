@@ -33,4 +33,4 @@ mkdir -p /var/lib/rails/uploads
 rm -rf public/uploads
 ln -nfs /var/lib/rails/uploads public/uploads
 
-exec $@
+exec "$@"
