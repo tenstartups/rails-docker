@@ -1,7 +1,7 @@
 #
-# Rails application baseimage dockerfile
+# Rails application dockerfile
 #
-# http://github.com/tenstartups/railsapp-baseimage-docker
+# http://github.com/tenstartups/railsapp-docker
 #
 
 # Pull base image.
@@ -11,7 +11,7 @@ MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 
 # Set environment.
 ENV DEBIAN_FRONTEND noninteractive
-ENV TERM xterm
+ENV TERM xterm-color
 ENV HOME /home/rails
 ENV PSQL_HISTORY /home/rails/.psql_history
 
@@ -85,6 +85,9 @@ RUN gem install awesome_print bundler rubygems-update --no-ri --no-rdoc
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Define working directory.
+WORKDIR /usr/src/app
+
 # Add files.
 COPY entrypoint /usr/local/bin/rails-docker-entrypoint
 
@@ -102,9 +105,6 @@ ONBUILD RUN bundle install --without development test --deployment
 
 # Copy the rest of the application into place.
 ONBUILD ADD . /usr/src/app
-
-# Define working directory.
-WORKDIR /usr/src/app
 
 # Dump out the git revision.
 ONBUILD RUN \
