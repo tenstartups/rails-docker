@@ -19,12 +19,7 @@ rm -rf log
 ln -nfs /var/log/rails log
 
 # Create a symlink for the tmp directory
-mkdir -p /var/tmp/rails
-rm -rf tmp
-ln -nfs /tmp/rails tmp
-
-# Create a symlink for the tmp directory
-mkdir -p /var/tmp/rails
+mkdir -p /tmp/rails
 rm -rf tmp
 ln -nfs /tmp/rails tmp
 
