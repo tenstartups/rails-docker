@@ -53,18 +53,10 @@ RUN \
   apt-get update && \
   apt-get -y install libpq-dev postgresql-client-9.4 postgresql-contrib-9.4
 
-# Compile node from source.
+# Install nodejs from official source.
 RUN \
-  cd /tmp && \
-  wget http://nodejs.org/dist/node-latest.tar.gz && \
-  tar xvzf node-*.tar.gz && \
-  rm -f node-*.tar.gz && \
-  cd node-* && \
-  ./configure && \
-  CXX="g++ -Wno-unused-local-typedefs" make && \
-  CXX="g++ -Wno-unused-local-typedefs" make install && \
-  cd .. && \
-  rm -rf node-v*
+  curl -sL https://deb.nodesource.com/setup | bash - && \
+  apt-get install -y nodejs
 
 # Compile ruby from source.
 RUN \
