@@ -9,6 +9,16 @@ IRB.conf[:SAVE_HISTORY] = 1000
 IRB.conf[:HISTORY_FILE] = "#{ENV['HOME']}/.irb-history"
 EOF
 
+# Prepare the bundle config if BUNDLE_PATH is provided in order to avoid
+# inconsistencies with how the bundler path is used
+if ! [ -z "${BUNDLE_PATH}" ]; then
+  mkdir -p .bundle
+  cat > ".bundle/config" <<- EOF
+---
+BUNDLE_PATH: '${BUNDLE_PATH}'
+  EOF
+fi
+
 # Prepare the psql history file
 mkdir -p `dirname "${PSQL_HISTORY}"`
 touch "${PSQL_HISTORY}"
