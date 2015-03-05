@@ -1,11 +1,10 @@
 #
-# Rails application dockerfile
+# Rails application docker image
 #
 # http://github.com/tenstartups/railsapp-docker
 #
 
-# Pull base image.
-FROM debian:jessie
+FROM ruby:latest
 
 MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 
@@ -16,31 +15,16 @@ ENV HOME /home/rails
 ENV PSQL_HISTORY /home/rails/.psql_history
 
 # Install base packages.
-RUN apt-get update
-RUN apt-get -y install \
-  build-essential \
+RUN apt-get update && apt-get -y install \
   curl \
   ghostscript \
   git \
   imagemagick \
   graphviz \
-  libcurl4-openssl-dev \
-  libreadline6-dev \
-  libssl-dev \
-  libsqlite3-dev \
-  libxml2-dev \
-  libxslt1-dev \
-  libyaml-dev \
   mysql-client \
   nano \
-  python \
-  python-dev \
-  python-pip \
-  python-software-properties \
-  python-virtualenv \
   sqlite3 \
-  wget \
-  zlib1g-dev
+  wget
 
 # Add postgresql client from official source.
 RUN \
@@ -55,19 +39,6 @@ RUN \
 RUN \
   curl -sL https://deb.nodesource.com/setup | bash - && \
   apt-get install -y nodejs
-
-# Compile ruby from source.
-RUN \
-  cd /tmp && \
-  wget http://ftp.ruby-lang.org/pub/ruby/2.2/ruby-2.2.0.tar.gz && \
-  tar -xzvf ruby-*.tar.gz && \
-  rm -f ruby-*.tar.gz && \
-  cd ruby-* && \
-  ./configure --enable-shared --disable-install-doc && \
-  make && \
-  make install && \
-  cd .. && \
-  rm -rf ruby-*
 
 # Install ruby gems.
 RUN gem install awesome_print bundler rubygems-update --no-ri --no-rdoc
