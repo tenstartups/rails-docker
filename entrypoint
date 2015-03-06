@@ -11,10 +11,15 @@ EOF
 
 # Prepare the bundle config if BUNDLE_PATH is provided in order to avoid
 # inconsistencies with how the bundler path is used
-if ! [ -z "${BUNDLE_PATH}" ]; then mkdir -p .bundle && cat << EOF > ".bundle/config"; fi
+BUNDLE_CONFIG_FILE=".bundle/config"
+read -r -d '' BUNDLE_CONFIG << EOF
 ---
 BUNDLE_PATH: '${BUNDLE_PATH}'
 EOF
+if ! [ -f "${BUNDLE_CONFIG_FILE}" ] || [ "`< ${BUNDLE_CONFIG_FILE}`" != "${BUNDLE_CONFIG}" ]; then
+  mkdir -p `dirname "${BUNDLE_CONFIG_FILE}"`
+  echo "${BUNDLE_CONFIG}" > "${BUNDLE_CONFIG_FILE}"
+fi
 
 # Prepare the psql history file
 mkdir -p `dirname "${PSQL_HISTORY}"`
