@@ -9,10 +9,11 @@ FROM ruby:latest
 MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 
 # Set environment.
-ENV DEBIAN_FRONTEND noninteractive
-ENV TERM xterm-color
-ENV HOME /home/rails
-ENV PSQL_HISTORY /home/rails/.psql_history
+ENV \
+  DEBIAN_FRONTEND=noninteractive \
+  TERM=xterm-color \
+  HOME=/home/rails \
+  PSQL_HISTORY=/home/rails/.psql_history
 
 # Install base packages.
 RUN apt-get update && apt-get -y install \
