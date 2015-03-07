@@ -1,43 +1,51 @@
-#!/bin/bash
+#!/usr/bin/env ruby
+
+require 'awesome_print'
+require 'fileutils'
+require 'yaml'
 
 # Create the irb configuration file
-mkdir -p "${HOME}"
-cat > "${HOME}/.irbrc" << EOF
+FileUtils.mkdir_p(ENV['HOME'])
+File.open("#{ENV['HOME']}/.irbrc", 'w') {|f| f.write(<<EOF)}
 require 'awesome_print'
 AwesomePrint.irb!
 IRB.conf[:SAVE_HISTORY] = 1000
-IRB.conf[:HISTORY_FILE] = "#{ENV['HOME']}/.irb-history"
+IRB.conf[:HISTORY_FILE] = "\#{ENV['HOME']}/.irb-history"
 EOF
 
 # Prepare the bundle config if BUNDLE_PATH is provided in order to avoid
 # inconsistencies with how the bundler path is used
-BUNDLE_CONFIG_FILE=".bundle/config"
-read -r -d '' BUNDLE_CONFIG << EOF
----
-BUNDLE_PATH: '${BUNDLE_PATH}'
-EOF
-if ! [ -f "${BUNDLE_CONFIG_FILE}" ] || [ "`< ${BUNDLE_CONFIG_FILE}`" != "${BUNDLE_CONFIG}" ]; then
-  mkdir -p `dirname "${BUNDLE_CONFIG_FILE}"`
-  echo "${BUNDLE_CONFIG}" > "${BUNDLE_CONFIG_FILE}"
-fi
+if ENV['BUNDLE_PATH']
+  config_file="./.bundle/config"
+  default_config = { 'BUNDLE_PATH' => ENV['BUNDLE_PATH'] }
+  current_config = File.exists?(config_file) ? YAML.load(File.open(config_file)) : {}
+  unless current_config['BUNDLE_PATH'] == default_config['BUNDLE_PATH']
+    current_config['BUNDLE_PATH'] = default_config['BUNDLE_PATH']
+    FileUtils.mkdir_p(File.dirname(config_file))
+    File.open(config_file, 'w'){|f| f.write(current_config.to_yaml)}
+  end
+end
 
 # Prepare the psql history file
-mkdir -p `dirname "${PSQL_HISTORY}"`
-touch "${PSQL_HISTORY}"
+if ENV['PSQL_HISTORY']
+  FileUtils.mkdir_p(File.dirname(ENV['PSQL_HISTORY']))
+  FileUtils.touch(ENV['PSQL_HISTORY'])
+end
 
 # Create a symlink for the log directory
-mkdir -p /var/log/rails
-rm -rf log
-ln -nfs /var/log/rails log
+FileUtils.mkdir_p(t = '/var/log/rails')
+FileUtils.rm_rf(s = './log')
+FileUtils.ln_sf(t, s)
 
 # Create a symlink for the tmp directory
-mkdir -p /tmp/rails
-rm -rf tmp
-ln -nfs /tmp/rails tmp
+FileUtils.mkdir_p(t = '/tmp/rails')
+FileUtils.rm_rf(s = './tmp')
+FileUtils.ln_sf(t, s)
 
 # Create a symlink for the public uploads directory
-mkdir -p /var/lib/rails/uploads
-rm -rf public/uploads
-ln -nfs /var/lib/rails/uploads public/uploads
+FileUtils.mkdir_p('./public')
+FileUtils.mkdir_p(t = '/var/lib/rails/uploads')
+FileUtils.rm_rf(s = './public/uploads')
+FileUtils.ln_sf(t, s)
 
-exec "$@"
+exec(*ARGV)
