@@ -47,4 +47,5 @@ FileUtils.mkdir_p(t = '/var/lib/rails/uploads')
 FileUtils.rm_rf(s = './public/uploads')
 FileUtils.ln_sf(t, s)
 
-exec(*ARGV)
+# Execute the passed in command if provided
+exec(*ARGV) if ARGV.size > 0
