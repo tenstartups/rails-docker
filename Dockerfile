@@ -72,7 +72,7 @@ ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
 ONBUILD ADD Gemfile /usr/src/app/Gemfile
 ONBUILD ADD Gemfile.lock /usr/src/app/Gemfile.lock
 ONBUILD RUN echo "gem: --no-ri --no-rdoc" > ${HOME}/.gemrc
-ONBUILD RUN rm -rf .bundle && bundle install --without development test --deployment
+ONBUILD RUN rm -rf .bundle && bundle install --retry 10 --without development test --deployment
 
 # Copy the rest of the application into place.
 ONBUILD ADD . /usr/src/app
