@@ -48,16 +48,25 @@ RUN gem install awesome_print bundler rubygems-update --no-ri --no-rdoc
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Define working directory.
-WORKDIR /usr/src/app
+WORKDIR /opt/rails
 
 # Add files.
-COPY entrypoint /usr/local/bin/rails-docker-entrypoint
+ADD . /opt/rails
+
+# Copy scripts and configuration into place.
+RUN \
+  mv ./entrypoint /usr/local/bin/docker-entrypoint && \
+  find ./script -regextype posix-extended -regex '^.+\.(rb|sh)\s*$' -exec bash -c 'f=`basename "{}"`; mv -v "{}" "/usr/local/bin/${f%.*}"' \; && \
+  rm -rf ./script
+
+# Define working directory.
+WORKDIR /usr/src/app
 
 # Define volumes.
 VOLUME ["/home/rails", "/etc/rails", "/var/lib/rails", "/var/www/railsapp", "/var/log/rails", "/tmp/rails"]
 
 # Define the entrypoint
-ENTRYPOINT ["/usr/local/bin/rails-docker-entrypoint"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
 
 # Copy the Gemfile into place and bundle.
 ONBUILD ADD Gemfile /usr/src/app/Gemfile
