@@ -42,7 +42,11 @@ RUN \
   apt-get install -y nodejs
 
 # Install ruby gems.
-RUN gem install awesome_print bundler rubygems-update --no-ri --no-rdoc
+RUN gem install --no-ri --no-rdoc \
+  awesome_print \
+  bundler \
+  ruby-graphviz \
+  rubygems-update
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
