@@ -22,8 +22,10 @@ RUN apt-get update && apt-get -y install \
   git \
   imagemagick \
   graphviz \
+  libjpeg-turbo-progs \
   mysql-client \
   nano \
+  optipng \
   sqlite3 \
   wget
 
