@@ -54,10 +54,10 @@ RUN gem install --no-ri --no-rdoc \
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Define working directory.
-WORKDIR /opt/rails
+WORKDIR /home/rails
 
 # Add files.
-ADD . /opt/rails
+ADD . /home/rails
 
 # Copy scripts and configuration into place.
 RUN \
@@ -86,5 +86,5 @@ ONBUILD ADD . /usr/src/app
 # Dump out the git revision.
 ONBUILD RUN \
   mkdir -p ./.git/objects && \
-  echo "$(git rev-parse HEAD)" > ./build-info.txt && \
+  echo "$(git rev-parse HEAD)" > ./REVISION && \
   rm -rf ./.git
