@@ -69,7 +69,7 @@ RUN \
 WORKDIR /usr/src/app
 
 # Define volumes.
-VOLUME ["/home/rails", "/etc/rails", "/var/lib/rails", "/var/log/rails", "/tmp/rails", "/usr/src/app"]
+VOLUME ["/home/rails", "/etc/rails", "/var/lib/rails", "/var/log/rails", "/tmp/rails"]
 
 # Define the entrypoint
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
