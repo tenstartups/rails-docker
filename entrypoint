@@ -26,12 +26,6 @@ if ENV['BUNDLE_PATH']
   end
 end
 
-# Prepare the psql history file
-if ENV['PSQL_HISTORY']
-  FileUtils.mkdir_p(File.dirname(ENV['PSQL_HISTORY']))
-  FileUtils.touch(ENV['PSQL_HISTORY'])
-end
-
 # Create a symlink for the log directory
 FileUtils.mkdir_p(t = '/var/log/rails')
 FileUtils.rm_rf(s = './log')

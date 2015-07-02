@@ -12,8 +12,7 @@ MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 ENV \
   DEBIAN_FRONTEND=noninteractive \
   TERM=xterm-color \
-  HOME=/home/rails \
-  PSQL_HISTORY=/home/rails/.psql_history
+  HOME=/home/rails
 
 # Install base packages.
 RUN apt-get update && apt-get -y install \
