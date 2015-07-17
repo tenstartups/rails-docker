@@ -60,8 +60,9 @@ ADD . /home/rails
 
 # Copy scripts and configuration into place.
 RUN \
-  mv ./entrypoint /usr/local/bin/docker-entrypoint && \
-  find ./script -regextype posix-extended -regex '^.+\.(rb|sh)\s*$' -exec bash -c 'f=`basename "{}"`; mv -v "{}" "/usr/local/bin/${f%.*}"' \; && \
+  cp ./entrypoint /usr/local/bin/docker-entrypoint && \
+  find ./script -type f -name '*.sh' | while read f; do echo 'n' | cp -iv "$f" "/usr/local/bin/`basename ${f%.sh}`" 2>/dev/null; done && \
+  find ./script -type f -name '*.rb' | while read f; do echo 'n' | cp -iv "$f" "/usr/local/bin/`basename ${f%.rb}`" 2>/dev/null; done && \
   rm -rf ./script
 
 # Define working directory.
@@ -71,7 +72,7 @@ WORKDIR /usr/src/app
 VOLUME ["/home/rails", "/etc/rails", "/var/lib/rails", "/var/log/rails", "/tmp/rails"]
 
 # Define the entrypoint
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
+ENTRYPOINT ["/home/rails/entrypoint"]
 
 # Copy the Gemfile into place and bundle.
 ONBUILD ADD Gemfile /usr/src/app/Gemfile
