@@ -4,12 +4,12 @@ require 'fileutils'
 require 'yaml'
 
 # Set environment
-ENV_FILE_REGEX = /^\s*ENV_FILE_(?<name>[_A-Z0-9]+)=(?<path>.+\.env)\s*$/
+ENV_FILE_REGEX = /^\s*ENV_FILE(?:_(?<name>[_A-Z0-9]+))?=(?<path>.+\.env)\s*$/
 ENVIRONMENT_REGEX = /^\s*(?<name>[^#][^=]+)[=](?<value>.+)$/
 
 # Export environment variables from file if provided
 ENV.map { |k, v| ENV_FILE_REGEX.match("#{k}=#{v}") }.compact.each do |match|
-  break unless File.exists?(match[:path])
+  break unless File.exist?(match[:path])
   env_file = File.open(match[:path]).read
   env_file.gsub!(/\r\n?/, "\n")
   env_file.each_line do |env_line|
@@ -20,7 +20,7 @@ end
 
 # Create the irb configuration file
 FileUtils.mkdir_p(ENV['HOME'])
-File.open("#{ENV['HOME']}/.irbrc", 'w') {|f| f.write(<<EOF)}
+File.open("#{ENV['HOME']}/.irbrc", 'w') { |f| f.write(<<EOF) }
 require 'awesome_print'
 AwesomePrint.irb!
 IRB.conf[:SAVE_HISTORY] = 1000
@@ -58,7 +58,8 @@ FileUtils.rm_rf(s = './public/uploads')
 FileUtils.ln_sf(t, s)
 
 # Execute an application specific entrypoint if present
-ARGV.unshift('/usr/src/app/entrypoint') if File.exist?('/usr/src/app/entrypoint')
+docker_entrypoint = Dir['./docker-entrypoint*', './entrypoint*'].select{ |f| f.executable? }.first
+ARGV.unshift(docker_entrypoint) if File.exist?(docker_entrypoint)
 
 # Execute the passed in command if provided
 exec(*ARGV) if ARGV.size > 0
