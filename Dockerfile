@@ -43,11 +43,7 @@ RUN \
   apt-get install -y nodejs
 
 # Install ruby gems.
-RUN gem install --no-ri --no-rdoc \
-  awesome_print \
-  bundler \
-  ruby-graphviz \
-  rubygems-update
+RUN gem install --no-ri --no-rdoc bundler
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -56,14 +52,10 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 WORKDIR /home/rails
 
 # Add files.
-ADD . /home/rails
-
-# Copy scripts and configuration into place.
-RUN \
-  cp ./entrypoint /usr/local/bin/docker-entrypoint && \
-  find ./script -type f -name '*.sh' | while read f; do echo 'n' | cp -iv "$f" "/usr/local/bin/`basename ${f%.sh}`" 2>/dev/null; done && \
-  find ./script -type f -name '*.rb' | while read f; do echo 'n' | cp -iv "$f" "/usr/local/bin/`basename ${f%.rb}`" 2>/dev/null; done && \
-  rm -rf ./script
+COPY entrypoint.rb /entrypoint
+COPY entrypoint.rb /usr/local/bin/docker-entrypoint
+COPY bundle-delete.sh /usr/local/bin/bundle-delete
+COPY rails-cleanup.sh /usr/local/bin/rails-cleanup
 
 # Define working directory.
 WORKDIR /usr/src/app
@@ -72,7 +64,7 @@ WORKDIR /usr/src/app
 VOLUME ["/home/rails", "/etc/rails", "/var/lib/rails", "/var/log/rails", "/tmp/rails"]
 
 # Define the entrypoint
-ENTRYPOINT ["/home/rails/entrypoint"]
+ENTRYPOINT ["/entrypoint"]
 
 # Copy the Gemfile into place and bundle.
 ONBUILD ADD Gemfile /usr/src/app/Gemfile
