@@ -18,7 +18,6 @@ ENV \
 RUN apt-get update && apt-get -y install \
   curl \
   ghostscript \
-  git \
   imagemagick \
   graphviz \
   libjpeg-turbo-progs \
@@ -77,7 +76,8 @@ ONBUILD RUN rm -rf .bundle && bundle install --retry 10 --without development te
 ONBUILD ADD . /usr/src/app
 
 # Dump out the git revision.
+ONBUILD COPY .git/HEAD .git/HEAD
+ONBUILD COPY .git/refs/heads .git/refs/heads
 ONBUILD RUN \
-  mkdir -p ./.git/objects && \
-  echo "$(git rev-parse HEAD)" > ./REVISION && \
+  cat ".git/$(cat .git/HEAD 2>/dev/null | sed -E 's/ref: (.+)/\1/')" 2>/dev/null > ./REVISION && \
   rm -rf ./.git
