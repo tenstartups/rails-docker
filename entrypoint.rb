@@ -19,12 +19,11 @@ ENV.map { |k, v| ENV_FILE_REGEX.match("#{k}=#{v}") }.compact.each do |match|
 end
 
 # Create the irb configuration file
-FileUtils.mkdir_p(ENV['HOME'])
-File.open("#{ENV['HOME']}/.irbrc", 'w') { |f| f.write(<<EOF) }
-require 'awesome_print'
-AwesomePrint.irb!
-IRB.conf[:SAVE_HISTORY] = 1000
-IRB.conf[:HISTORY_FILE] = "\#{ENV['HOME']}/.irb-history"
+File.open("#{ENV['HOME']}/.irbrc", 'w') { |f| f.write(<<EOF) } if ENV['HOME']
+  require 'awesome_print'
+  AwesomePrint.irb!
+  IRB.conf[:SAVE_HISTORY] = 1000
+  IRB.conf[:HISTORY_FILE] = "\#{ENV['HOME']}/.irb-history"
 EOF
 
 # Prepare the bundle config if BUNDLE_PATH is provided in order to avoid
@@ -40,22 +39,6 @@ if ENV['BUNDLE_PATH']
     File.open(config_file, 'w') { |f| f.write(current_config.to_yaml) }
   end
 end
-
-# Create a symlink for the log directory
-FileUtils.mkdir_p(t = '/var/log/rails')
-FileUtils.rm_rf(s = './log')
-FileUtils.ln_sf(t, s)
-
-# Create a symlink for the tmp directory
-FileUtils.mkdir_p(t = '/tmp/rails')
-FileUtils.rm_rf(s = './tmp')
-FileUtils.ln_sf(t, s)
-
-# Create a symlink for the public uploads directory
-FileUtils.mkdir_p('./public')
-FileUtils.mkdir_p(t = '/var/lib/rails/uploads')
-FileUtils.rm_rf(s = './public/uploads')
-FileUtils.ln_sf(t, s)
 
 # Execute an application specific entrypoint if present
 docker_entrypoint = Dir['./docker-entrypoint*', './entrypoint*'].select{ |f| File.executable?(f) }.first
