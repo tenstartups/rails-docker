@@ -61,7 +61,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 WORKDIR /home/rails
 
 # Add files.
-COPY entrypoint.rb /entrypoint
+COPY entrypoint.rb /docker-entrypoint
 COPY entrypoint.rb /usr/local/bin/docker-entrypoint
 COPY bundle-delete.sh /usr/local/bin/bundle-delete
 COPY rails-cleanup.sh /usr/local/bin/rails-cleanup
@@ -73,7 +73,7 @@ WORKDIR /usr/src/app
 VOLUME ["/home/rails", "/etc/rails", "/var/lib/rails", "/var/log/rails", "/tmp/rails"]
 
 # Define the entrypoint
-ENTRYPOINT ["/entrypoint"]
+ENTRYPOINT ["/docker-entrypoint"]
 
 # Copy the Gemfile into place and bundle.
 ONBUILD ADD Gemfile /usr/src/app/Gemfile
