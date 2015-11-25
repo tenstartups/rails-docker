@@ -44,6 +44,13 @@ RUN \
   curl -sL https://deb.nodesource.com/setup | bash - && \
   apt-get install -y nodejs
 
+# Install wkhtmltopdf from debian package.
+RUN \
+  cd /tmp && \
+  wget http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-jessie-amd64.deb && \
+  dpkg -i wkhtmltox-*.deb && \
+  rm -rf wkhtmltox-*
+
 # Install ruby gems.
 RUN gem install --no-ri --no-rdoc bundler
 
