@@ -52,14 +52,16 @@ RUN \
   dpkg -i wkhtmltox-*.deb && \
   rm -rf wkhtmltox-*
 
+# Define working directory.
+WORKDIR ${HOME}
+
 # Install ruby gems.
-RUN gem install --no-ri --no-rdoc bundler
+RUN \
+  echo "gem: --no-ri --no-rdoc" > ${HOME}/.gemrc && \
+  gem install --no-ri --no-rdoc bundler
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Define working directory.
-WORKDIR /home/rails
 
 # Add files.
 COPY entrypoint.rb /docker-entrypoint
@@ -71,7 +73,7 @@ COPY rails-cleanup.sh /usr/local/bin/rails-cleanup
 WORKDIR /usr/src/app
 
 # Define volumes.
-VOLUME ["/home/rails", "/etc/rails", "/var/lib/rails", "/var/log/rails", "/tmp/rails"]
+VOLUME ["${HOME}", "/etc/rails", "/var/lib/rails", "/var/log/rails", "/tmp/rails"]
 
 # Define the entrypoint
 ENTRYPOINT ["/docker-entrypoint"]
@@ -79,8 +81,10 @@ ENTRYPOINT ["/docker-entrypoint"]
 # Copy the Gemfile into place and bundle.
 ONBUILD ADD Gemfile /usr/src/app/Gemfile
 ONBUILD ADD Gemfile.lock /usr/src/app/Gemfile.lock
-ONBUILD RUN echo "gem: --no-ri --no-rdoc" > ${HOME}/.gemrc
-ONBUILD RUN rm -rf .bundle && bundle install --retry 10 --without development test --deployment
+ONBUILD RUN \
+rm -rf .bundle && \
+  bundle config build.nokogiri --use-system-libraries && \
+  bundle install --retry 10 --without development test --deployment
 
 # Copy the rest of the application into place.
 ONBUILD ADD . /usr/src/app
