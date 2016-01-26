@@ -18,8 +18,9 @@ ENV \
 RUN apt-get update && apt-get -y install \
   curl \
   ghostscript \
-  imagemagick \
+  graphicsmagick \
   graphviz \
+  imagemagick \
   libjpeg-turbo-progs \
   mysql-client \
   nano \
