@@ -39,7 +39,7 @@ RUN \
   wget https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
   apt-key add ACCC4CF8.asc && \
   apt-get update && \
-  apt-get -y install libpq-dev postgresql-client-9.4 postgresql-contrib-9.4
+  apt-get -y install libpq-dev postgresql-client-9.5 postgresql-contrib-9.5
 
 # Install nodejs from official source.
 RUN \
@@ -72,9 +72,6 @@ COPY rails-cleanup.sh /usr/local/bin/rails-cleanup
 
 # Define working directory.
 WORKDIR /usr/src/app
-
-# Define volumes.
-VOLUME ["${HOME}", "/etc/rails", "/var/lib/rails", "/var/log/rails", "/tmp/rails"]
 
 # Define the entrypoint
 ENTRYPOINT ["/docker-entrypoint"]
