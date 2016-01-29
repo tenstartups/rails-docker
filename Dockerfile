@@ -24,6 +24,7 @@ RUN apt-get update && apt-get -y install \
   libjpeg-turbo-progs \
   mysql-client \
   nano \
+  net-tools \
   optipng \
   pdftk \
   rsync \
