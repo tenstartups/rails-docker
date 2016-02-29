@@ -59,8 +59,8 @@ WORKDIR ${HOME}
 
 # Install ruby gems.
 RUN \
-  echo "gem: --no-ri --no-rdoc" > ${HOME}/.gemrc && \
-  gem install --no-ri --no-rdoc bundler
+  echo "gem: --no-document" > ${HOME}/.gemrc && \
+  gem install bundler --no-document
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
