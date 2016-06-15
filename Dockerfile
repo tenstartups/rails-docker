@@ -81,8 +81,7 @@ ENTRYPOINT ["/docker-entrypoint"]
 ONBUILD ADD Gemfile /usr/src/app/Gemfile
 ONBUILD ADD Gemfile.lock /usr/src/app/Gemfile.lock
 ONBUILD RUN \
-rm -rf .bundle && \
-  bundle config build.nokogiri --use-system-libraries && \
+  rm -rf .bundle && \
   bundle install --retry 10 --without development test --deployment
 
 # Copy the rest of the application into place.
