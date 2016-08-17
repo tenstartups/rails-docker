@@ -87,9 +87,6 @@ ONBUILD RUN \
 # Copy the rest of the application into place.
 ONBUILD ADD . /usr/src/app
 
-# Dump out the git revision.
-ONBUILD COPY .git/HEAD .git/HEAD
-ONBUILD COPY .git/refs/heads .git/refs/heads
-ONBUILD RUN \
-  cat ".git/$(cat .git/HEAD 2>/dev/null | sed -E 's/ref: (.+)/\1/')" 2>/dev/null > ./REVISION && \
-  rm -rf ./.git
+# Dump the revision argument to file if present
+ONBUILD ARG BUILD_REVISION
+ONBUILD RUN echo ${BUILD_REVISION} > ./REVISION
