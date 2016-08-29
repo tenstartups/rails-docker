@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-
 require 'fileutils'
 require 'yaml'
 
@@ -28,21 +27,19 @@ EOF
 
 # Prepare the bundle config if BUNDLE_PATH is provided in order to avoid
 # inconsistencies with how the bundler path is used
-if ENV['BUNDLE_PATH']
-  bundle_config_dir = ENV['BUNDLE_APP_CONFIG'] || './.bundle'
-  config_file = File.join(bundle_config_dir, 'config')
-  default_config = { 'BUNDLE_PATH' => ENV['BUNDLE_PATH'] }
-  current_config = File.exists?(config_file) ? YAML.load(File.open(config_file)) : {}
-  unless current_config['BUNDLE_PATH'] == default_config['BUNDLE_PATH']
-    current_config['BUNDLE_PATH'] = default_config['BUNDLE_PATH']
-    FileUtils.mkdir_p(bundle_config_dir)
-    File.open(config_file, 'w') { |f| f.write(current_config.to_yaml) }
-  end
+bundle_config_dir = ENV['BUNDLE_APP_CONFIG']
+config_file = File.join(bundle_config_dir, 'config')
+default_config = { 'BUNDLE_PATH' => ENV['BUNDLE_PATH'] }
+current_config = File.exist?(config_file) ? YAML.load(File.open(config_file)) : {}
+unless current_config['BUNDLE_PATH'] == default_config['BUNDLE_PATH']
+  current_config['BUNDLE_PATH'] = default_config['BUNDLE_PATH']
+  FileUtils.mkdir_p(bundle_config_dir)
+  File.open(config_file, 'w') { |f| f.write(current_config.to_yaml) }
 end
 
 # Execute an application specific entrypoint if present
-docker_entrypoint = Dir['./docker-entrypoint*', './entrypoint*'].select{ |f| File.executable?(f) }.first
+docker_entrypoint = Dir['./docker-entrypoint*', './entrypoint*'].select { |f| File.executable?(f) }.first
 ARGV.unshift(docker_entrypoint) if docker_entrypoint && File.exist?(docker_entrypoint)
 
 # Execute the passed in command if provided
-exec(*ARGV) if ARGV.size > 0
+exec(*ARGV) unless ARGV.empty?

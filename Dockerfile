@@ -12,26 +12,16 @@ MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 ENV \
   DEBIAN_FRONTEND=noninteractive \
   TERM=xterm-color \
-  HOME=/home/rails
+  HOME=/home/rails \
+  BUNDLE_PATH=./vendor/bundle \
+  BUNDLE_APP_CONFIG=./.bundle
 
 # Install base packages.
-RUN apt-get update && apt-get -y install \
-  curl \
-  ghostscript \
-  graphicsmagick \
-  graphviz \
-  imagemagick \
-  libjpeg-turbo-progs \
-  mysql-client \
-  nano \
-  net-tools \
-  optipng \
-  pdftk \
-  rsync \
-  sqlite3 \
-  wget \
-  xfonts-base \
-  xfonts-75dpi
+RUN \
+  apt-get update && \
+  apt-get -y install \
+    curl ghostscript graphicsmagick graphviz imagemagick libjpeg-turbo-progs mysql-client \
+    nano net-tools nodejs optipng pdftk rsync sqlite3 wget xfonts-base xfonts-75dpi
 
 # Add postgresql client from official source.
 RUN \
@@ -41,11 +31,6 @@ RUN \
   apt-key add ACCC4CF8.asc && \
   apt-get update && \
   apt-get -y install libpq-dev postgresql-client-9.5 postgresql-contrib-9.5
-
-# Install nodejs from official source.
-RUN \
-  curl -sL https://deb.nodesource.com/setup | bash - && \
-  apt-get install -y nodejs
 
 # Install wkhtmltopdf from debian package.
 RUN \
@@ -60,16 +45,15 @@ WORKDIR ${HOME}
 # Install ruby gems.
 RUN \
   echo "gem: --no-document" > ${HOME}/.gemrc && \
-  gem install bundler --no-document
+  gem install aws-sdk bundler rake --no-document
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Add files.
 COPY entrypoint.rb /docker-entrypoint
-COPY entrypoint.rb /usr/local/bin/docker-entrypoint
-COPY bundle-delete.sh /usr/local/bin/bundle-delete
-COPY rails-cleanup.sh /usr/local/bin/rails-cleanup
+COPY bundle-gems.rb /usr/local/bin/bundle-gems
+COPY compile-assets.rb /usr/local/bin/compile-assets
 
 # Define working directory.
 WORKDIR /usr/src/app
@@ -77,16 +61,23 @@ WORKDIR /usr/src/app
 # Define the entrypoint
 ENTRYPOINT ["/docker-entrypoint"]
 
-# Copy the Gemfile into place and bundle.
-ONBUILD ADD Gemfile /usr/src/app/Gemfile
-ONBUILD ADD Gemfile.lock /usr/src/app/Gemfile.lock
-ONBUILD RUN \
-  rm -rf .bundle && \
-  bundle install --retry 10 --without development test --deployment
+# Declare build arguments
+ONBUILD ARG BUILD_REVISION=unspecified
+ONBUILD ARG BUNDLE_GEMS=true
+ONBUILD ARG COMPILE_ASSETS=true
+ONBUILD ARG RAILS_BUILD_ENVIRONMENTS=staging,production
+ONBUILD ARG CACHE_BUNDLED_GEMS=false
+ONBUILD ARG CACHE_COMPILED_ASSETS=false
+ONBUILD ARG AWS_ACCESS_KEY_ID
+ONBUILD ARG AWS_SECRET_ACCESS_KEY
+ONBUILD ARG AWS_REGION=us-east-1
+ONBUILD ARG AWS_S3_BUCKET_NAME
 
 # Copy the rest of the application into place.
 ONBUILD ADD . /usr/src/app
 
+# Execute scripts to bundle gem and compile assets
+ONBUILD RUN /usr/local/bin/bundle-gems && /usr/local/bin/compile-assets
+
 # Dump the revision argument to file if present
-ONBUILD ARG BUILD_REVISION
 ONBUILD RUN echo ${BUILD_REVISION} > ./REVISION
