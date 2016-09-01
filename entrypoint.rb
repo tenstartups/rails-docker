@@ -38,7 +38,7 @@ unless current_config['BUNDLE_PATH'] == default_config['BUNDLE_PATH']
 end
 
 # Execute an application specific entrypoint if present
-docker_entrypoint = Dir['./docker-entrypoint*', './entrypoint*'].select { |f| File.executable?(f) }.first
+docker_entrypoint = Dir["#{Dir.pwd}/docker-entrypoint*", "#{Dir.pwd}/entrypoint*"].select { |f| File.executable?(f) }.first
 ARGV.unshift(docker_entrypoint) if docker_entrypoint && File.exist?(docker_entrypoint)
 
 # Execute the passed in command if provided

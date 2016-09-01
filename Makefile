@@ -1,4 +1,4 @@
-DOCKER_IMAGE_NAME := tenstartups/rails:latest
+DOCKER_IMAGE_NAME := tenstartups/rails:alpine
 
 build: Dockerfile
 	docker build --file Dockerfile --tag $(DOCKER_IMAGE_NAME) .

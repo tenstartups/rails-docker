@@ -4,51 +4,77 @@
 # http://github.com/tenstartups/railsapp-docker
 #
 
-FROM ruby:latest
+FROM tenstartups/alpine:latest
 
 MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 
 # Set environment.
 ENV \
-  DEBIAN_FRONTEND=noninteractive \
   TERM=xterm-color \
   HOME=/home/rails \
   BUNDLE_PATH=./vendor/bundle \
-  BUNDLE_APP_CONFIG=./.bundle
+  BUNDLE_APP_CONFIG=./.bundle \
+  BUNDLE_SILENCE_ROOT_WARNING=true \
+  NOKOGIRI_USE_SYSTEM_LIBRARIES=true \
+  RUBY_MAJOR=2.3 \
+  RUBY_VERSION=2.3.1 \
+  RUBY_DOWNLOAD_SHA256=b87c738cb2032bf4920fef8e3864dc5cf8eae9d89d8d523ce0236945c5797dcd
 
 # Install base packages.
 RUN \
-  apt-get update && \
-  apt-get -y install \
-    curl ghostscript graphicsmagick graphviz imagemagick libjpeg-turbo-progs mysql-client \
-    nano net-tools nodejs optipng pdftk rsync sqlite3 wget xfonts-base xfonts-75dpi
+  apk --update add \
+    autoconf \
+    build-base \
+    bzip2-dev \
+    ca-certificates \
+    file \
+    git \
+    imagemagick \
+    libffi-dev \
+    libgcrypt-dev \
+    libpq \
+    libxml2-dev \
+    libxslt-dev \
+    linux-headers \
+    nodejs \
+    openssl-dev \
+    postgresql-dev \
+    # https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
+    readline-dev \
+    rsync \
+    tzdata \
+    xz \
+    yaml-dev \
+    zlib-dev \
+    && \
+  rm -rf /var/cache/apk/*
 
-# Add postgresql client from official source.
-RUN \
-  cd /tmp && \
-  echo "deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-  wget https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
-  apt-key add ACCC4CF8.asc && \
-  apt-get update && \
-  apt-get -y install libpq-dev postgresql-client-9.5 postgresql-contrib-9.5
+  # Install ruby from source.
+  RUN \
+    curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR}/ruby-${RUBY_VERSION}.tar.gz" && \
+    echo "${RUBY_DOWNLOAD_SHA256} *ruby.tar.gz" | sha256sum -c - && \
+    mkdir -p /usr/src && \
+    tar -xzf ruby.tar.gz -C /usr/src && \
+    mv "/usr/src/ruby-$RUBY_VERSION" /usr/src/ruby && \
+    rm ruby.tar.gz && \
+    cd /usr/src/ruby && \
+    { echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new && mv file.c.new file.c && \
+    autoconf && \
+    # the configure script does not detect isnan/isinf as macros
+    ac_cv_func_isnan=yes ac_cv_func_isinf=yes ./configure --disable-install-doc && \
+    make -j"$(getconf _NPROCESSORS_ONLN)" && \
+    make install && \
+    gem update --system && \
+  rm -r /usr/src/ruby
 
-# Install wkhtmltopdf from debian package.
-RUN \
-  cd /tmp && \
-  wget http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-jessie-amd64.deb && \
-  dpkg -i wkhtmltox-*.deb && \
-  rm -rf wkhtmltox-*
+  # Install ruby gems.
+  RUN \
+    mkdir -p /usr/local/etc/ && \
+    echo "gem: --no-document" > /usr/local/etc/gemrc && \
+    gem install aws-sdk bundler --no-document
 
 # Define working directory.
 WORKDIR ${HOME}
-
-# Install ruby gems.
-RUN \
-  echo "gem: --no-document" > ${HOME}/.gemrc && \
-  gem install aws-sdk bundler rake --no-document
-
-# Clean up APT when done.
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Add files.
 COPY entrypoint.rb /docker-entrypoint
@@ -77,7 +103,8 @@ ONBUILD ARG AWS_S3_BUCKET_NAME
 ONBUILD ADD . /usr/src/app
 
 # Execute scripts to bundle gem and compile assets
-ONBUILD RUN /usr/local/bin/bundle-gems && /usr/local/bin/compile-assets
+ONBUILD RUN /usr/local/bin/bundle-gems
+ONBUILD RUN /usr/local/bin/compile-assets
 
 # Dump the revision argument to file if present
 ONBUILD RUN echo ${BUILD_REVISION} > ./REVISION

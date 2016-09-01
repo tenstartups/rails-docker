@@ -64,7 +64,7 @@ local_directory_hash = compute_directory_hash(ENV['BUNDLE_PATH'])
 
 # Bundle gems
 puts 'Bundling ruby gems...'
-system 'bundle install --retry 10 --without development test --deployment'
+system 'bundle install --without development test --deployment'
 puts 'Cleaning unused bundled gems...'
 system 'bundle clean'
 
