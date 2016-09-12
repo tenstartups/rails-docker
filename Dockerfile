@@ -29,6 +29,7 @@ RUN \
     ca-certificates \
     file \
     git \
+    graphviz \
     imagemagick \
     libffi-dev \
     libgcrypt-dev \
