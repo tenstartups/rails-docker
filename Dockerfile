@@ -29,6 +29,7 @@ RUN \
     bzip2-dev \
     ca-certificates \
     file \
+    font-bitstream-type1 \
     git \
     graphviz \
     imagemagick \
