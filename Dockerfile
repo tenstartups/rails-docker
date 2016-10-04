@@ -23,6 +23,7 @@ ENV \
 
 # Install base packages.
 RUN \
+  echo 'http://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
   apk --update add \
     autoconf \
     build-base \
