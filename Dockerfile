@@ -30,7 +30,7 @@ RUN \
   wget https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
   apt-key add ACCC4CF8.asc && \
   apt-get update && \
-  apt-get -y install libpq-dev postgresql-client-9.5 postgresql-contrib-9.5
+  apt-get -y install libpq-dev postgresql-client-9.6 postgresql-contrib-9.6
 
 # Install wkhtmltopdf from debian package.
 RUN \
