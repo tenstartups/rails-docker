@@ -12,14 +12,13 @@ MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 ENV \
   TERM=xterm-color \
   HOME=/home/rails \
-  BUNDLE_PATH=./vendor/bundle \
-  BUNDLE_APP_CONFIG=./.bundle \
   BUNDLE_SILENCE_ROOT_WARNING=true \
+  BUNDLE_PATH=/usr/local/lib/ruby/bundler \
   NOKOGIRI_USE_SYSTEM_LIBRARIES=true \
   PAGER=more \
   RUBY_MAJOR=2.3 \
-  RUBY_VERSION=2.3.1 \
-  RUBY_DOWNLOAD_SHA256=b87c738cb2032bf4920fef8e3864dc5cf8eae9d89d8d523ce0236945c5797dcd
+  RUBY_VERSION=2.3.3 \
+  RUBY_DOWNLOAD_SHA256=241408c8c555b258846368830a06146e4849a1d58dcaf6b14a3b6a73058115b7
 
 # Install base packages.
 RUN \
@@ -53,29 +52,29 @@ RUN \
     && \
   rm -rf /var/cache/apk/*
 
-  # Install ruby from source.
-  RUN \
-    curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR}/ruby-${RUBY_VERSION}.tar.gz" && \
-    echo "${RUBY_DOWNLOAD_SHA256} *ruby.tar.gz" | sha256sum -c - && \
-    mkdir -p /usr/src && \
-    tar -xzf ruby.tar.gz -C /usr/src && \
-    mv "/usr/src/ruby-$RUBY_VERSION" /usr/src/ruby && \
-    rm ruby.tar.gz && \
-    cd /usr/src/ruby && \
-    { echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new && mv file.c.new file.c && \
-    autoconf && \
-    # the configure script does not detect isnan/isinf as macros
-    ac_cv_func_isnan=yes ac_cv_func_isinf=yes ./configure --disable-install-doc && \
-    make -j"$(getconf _NPROCESSORS_ONLN)" && \
-    make install && \
-    gem update --system && \
-  rm -r /usr/src/ruby
+# Install ruby from source.
+RUN \
+  curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR}/ruby-${RUBY_VERSION}.tar.gz" && \
+  echo "${RUBY_DOWNLOAD_SHA256} *ruby.tar.gz" | sha256sum -c - && \
+  mkdir -p /usr/src && \
+  tar -xzf ruby.tar.gz -C /usr/src && \
+  mv "/usr/src/ruby-${RUBY_VERSION}" /usr/src/ruby && \
+  rm ruby.tar.gz && \
+  cd /usr/src/ruby && \
+  { echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new && mv file.c.new file.c && \
+  autoconf && \
+  # the configure script does not detect isnan/isinf as macros
+  ac_cv_func_isnan=yes ac_cv_func_isinf=yes ./configure --disable-install-doc && \
+  make -j"$(getconf _NPROCESSORS_ONLN)" && \
+  make install && \
+  gem update --system && \
+rm -r /usr/src/ruby
 
-  # Install ruby gems.
-  RUN \
-    mkdir -p /usr/local/etc/ && \
-    echo "gem: --no-document" > /usr/local/etc/gemrc && \
-    gem install aws-sdk bundler --no-document
+# Install ruby gems.
+RUN \
+  mkdir -p /usr/local/etc/ && \
+  echo "gem: --no-document" > /usr/local/etc/gemrc && \
+  gem install aws-sdk bundler --no-document
 
 # Define working directory.
 WORKDIR ${HOME}
@@ -87,6 +86,9 @@ COPY compile-assets.rb /usr/local/bin/compile-assets
 
 # Define working directory.
 WORKDIR /usr/src/app
+
+# Define volumes.
+VOLUME ["/usr/local/lib/ruby/bundler"]
 
 # Define the entrypoint
 ENTRYPOINT ["/docker-entrypoint"]

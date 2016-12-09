@@ -19,23 +19,9 @@ end
 
 # Create the irb configuration file
 File.open("#{ENV['HOME']}/.irbrc", 'w') { |f| f.write(<<EOF) } if ENV['HOME']
-  require 'awesome_print'
-  AwesomePrint.irb!
   IRB.conf[:SAVE_HISTORY] = 1000
   IRB.conf[:HISTORY_FILE] = "\#{ENV['HOME']}/.irb-history"
 EOF
-
-# Prepare the bundle config if BUNDLE_PATH is provided in order to avoid
-# inconsistencies with how the bundler path is used
-bundle_config_dir = ENV['BUNDLE_APP_CONFIG']
-config_file = File.join(bundle_config_dir, 'config')
-default_config = { 'BUNDLE_PATH' => ENV['BUNDLE_PATH'] }
-current_config = File.exist?(config_file) ? YAML.load(File.open(config_file)) : {}
-unless current_config['BUNDLE_PATH'] == default_config['BUNDLE_PATH']
-  current_config['BUNDLE_PATH'] = default_config['BUNDLE_PATH']
-  FileUtils.mkdir_p(bundle_config_dir)
-  File.open(config_file, 'w') { |f| f.write(current_config.to_yaml) }
-end
 
 # Execute an application specific entrypoint if present
 docker_entrypoint = Dir["#{Dir.pwd}/docker-entrypoint*", "#{Dir.pwd}/entrypoint*"].select { |f| File.executable?(f) }.first
