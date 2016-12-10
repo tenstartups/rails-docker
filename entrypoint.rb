@@ -23,6 +23,9 @@ File.open("#{ENV['HOME']}/.irbrc", 'w') { |f| f.write(<<EOF) } if ENV['HOME']
   IRB.conf[:HISTORY_FILE] = "\#{ENV['HOME']}/.irb-history"
 EOF
 
+# Remove the bundle configuration if it exists
+FileUtils.rm_f("#{ENV['HOME']}/.bundle/config")
+
 # Execute an application specific entrypoint if present
 docker_entrypoint = Dir["#{Dir.pwd}/docker-entrypoint*", "#{Dir.pwd}/entrypoint*"].select { |f| File.executable?(f) }.first
 ARGV.unshift(docker_entrypoint) if docker_entrypoint && File.exist?(docker_entrypoint)
