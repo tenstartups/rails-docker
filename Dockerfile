@@ -12,8 +12,12 @@ MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 ENV \
   TERM=xterm-color \
   HOME=/home/rails \
-  BUNDLE_SILENCE_ROOT_WARNING=true \
+  BUNDLE_DISABLE_SHARED_GEMS=false \
+  BUNDLE_GIT__ALLOW_INSECURE=true \
+  BUNDLE_IGNORE_MESSAGES=true \
+  BUNDLE_JOBS=2 \
   BUNDLE_PATH=/usr/local/lib/ruby/bundler \
+  BUNDLE_SILENCE_ROOT_WARNING=true \
   NOKOGIRI_USE_SYSTEM_LIBRARIES=true \
   PAGER=more \
   RUBY_MAJOR=2.3 \
