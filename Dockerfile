@@ -20,6 +20,7 @@ ENV \
   BUNDLE_SILENCE_ROOT_WARNING=true \
   NOKOGIRI_USE_SYSTEM_LIBRARIES=true \
   PAGER=more \
+  PG_VERSION=9.6.1 \
   RUBY_MAJOR=2.3 \
   RUBY_VERSION=2.3.3 \
   RUBY_DOWNLOAD_SHA256=241408c8c555b258846368830a06146e4849a1d58dcaf6b14a3b6a73058115b7
@@ -44,8 +45,6 @@ RUN \
     linux-headers \
     nodejs \
     openssl-dev \
-    postgresql \
-    postgresql-dev \
     # https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
     readline-dev \
     rsync \
@@ -55,6 +54,18 @@ RUN \
     zlib-dev \
     && \
   rm -rf /var/cache/apk/*
+
+# Install postgresql
+RUN wget ftp://ftp.postgresql.org/pub/source/v${PG_VERSION}/postgresql-${PG_VERSION}.tar.bz2 -O /tmp/postgresql-${PG_VERSION}.tar.bz2 && \
+    tar xvfj /tmp/postgresql-${PG_VERSION}.tar.bz2 -C /tmp && \
+    cd /tmp/postgresql-${PG_VERSION} && \
+    ./configure --enable-integer-datetimes --enable-thread-safety --prefix=/usr/local --with-libedit-preferred --with-openssl && \
+    make world && \
+    make install world && \
+    make -C contrib install && \
+    cd /tmp/postgresql-${PG_VERSION}/contrib && \
+    make && make install && \
+    rm -r /tmp/postgresql-${PG_VERSION}*
 
 # Install ruby from source.
 RUN \
