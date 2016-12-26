@@ -71,6 +71,10 @@ ENV['RAILS_BUILD_ENVIRONMENTS'].split(',').each do |stage|
   puts "Cleaning obsolete #{stage} compiled assets..."
   system ({ 'RAILS_ENV' => stage }), 'bundle exec rake assets:clean'
   FileUtils.mv('./public/assets', assets_directory)
+  FileUtils.rm_rf('./log')
+  FileUtils.rm_rf('./tmp')
+  FileUtils.ln_sf('/var/log/rails', './log')
+  FileUtils.ln_sf('/tmp/rails', './tmp')
 
   # Update the remote cache tar if changed
   if ENV['CACHE_COMPILED_ASSETS'] == 'true' && compute_directory_hash(assets_directory) != local_directory_hash
