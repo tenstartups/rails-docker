@@ -23,7 +23,7 @@ def compute_directory_hash(path)
   end.to_s
 end
 
-# Make sure environment is properly set for cache retrieval and uploadi
+# Make sure environment is properly set for cache retrieval and uploading
 if ENV['CACHE_COMPILED_ASSETS'] == 'true'
   exit 1 && STDERR.puts('Missing environment variable AWS_ACCESS_KEY_ID') unless ENV['AWS_ACCESS_KEY_ID']
   exit 1 && STDERR.puts('Missing environment variable AWS_SECRET_ACCESS_KEY') unless ENV['AWS_SECRET_ACCESS_KEY']
@@ -39,6 +39,12 @@ if ENV['CACHE_COMPILED_ASSETS'] == 'true'
   )
   bucket = s3.bucket(ENV['AWS_S3_BUCKET_NAME'])
 end
+
+# Create directories
+FileUtils.rm_rf('./log')
+FileUtils.rm_rf('./tmp')
+FileUtils.ln_sf('/var/log/rails', './log')
+FileUtils.ln_sf('/tmp/rails', './tmp')
 
 # Iterate for each environment
 ENV['RAILS_BUILD_ENVIRONMENTS'].split(',').each do |stage|
@@ -71,10 +77,6 @@ ENV['RAILS_BUILD_ENVIRONMENTS'].split(',').each do |stage|
   puts "Cleaning obsolete #{stage} compiled assets..."
   system ({ 'RAILS_ENV' => stage }), 'bundle exec rake assets:clean'
   FileUtils.mv('./public/assets', assets_directory)
-  FileUtils.rm_rf('./log')
-  FileUtils.rm_rf('./tmp')
-  FileUtils.ln_sf('/var/log/rails', './log')
-  FileUtils.ln_sf('/tmp/rails', './tmp')
 
   # Update the remote cache tar if changed
   if ENV['CACHE_COMPILED_ASSETS'] == 'true' && compute_directory_hash(assets_directory) != local_directory_hash
@@ -88,3 +90,9 @@ ENV['RAILS_BUILD_ENVIRONMENTS'].split(',').each do |stage|
     FileUtils.rm_f(local_cache_gzip_file)
   end
 end
+
+# Cleanup
+FileUtils.rm_rf('./log')
+FileUtils.rm_rf('./tmp')
+FileUtils.ln_sf('/var/log/rails', './log')
+FileUtils.ln_sf('/tmp/rails', './tmp')
