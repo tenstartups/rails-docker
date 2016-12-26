@@ -43,6 +43,8 @@ end
 # Create directories
 FileUtils.rm_rf('./log')
 FileUtils.rm_rf('./tmp')
+FileUtils.mkdir_p('/var/log/rails')
+FileUtils.mkdir_p('/tmp/rails')
 FileUtils.ln_sf('/var/log/rails', './log')
 FileUtils.ln_sf('/tmp/rails', './tmp')
 
@@ -92,7 +94,7 @@ ENV['RAILS_BUILD_ENVIRONMENTS'].split(',').each do |stage|
 end
 
 # Cleanup
-FileUtils.rm_rf('./log')
-FileUtils.rm_rf('./tmp')
-FileUtils.ln_sf('/var/log/rails', './log')
-FileUtils.ln_sf('/tmp/rails', './tmp')
+FileUtils.rm_rf('/var/log/rails')
+FileUtils.rm_rf('/tmp/rails')
+FileUtils.mkdir_p('/var/log/rails')
+FileUtils.mkdir_p('/tmp/rails')
