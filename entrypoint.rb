@@ -20,7 +20,7 @@ end
 # Create the irb configuration file
 File.open("#{ENV['HOME']}/.irbrc", 'w') { |f| f.write(<<EOF) } if ENV['HOME']
   IRB.conf[:SAVE_HISTORY] = 1000
-  IRB.conf[:HISTORY_FILE] = "\#{ENV['HOME']}/.irb-history"
+  IRB.conf[:HISTORY_FILE] = "\#{ENV['HOME']}/.irb_history"
 EOF
 
 # Remove the bundle configuration if it exists
