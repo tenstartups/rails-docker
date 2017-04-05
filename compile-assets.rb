@@ -15,6 +15,10 @@ define_method :system do |*args|
   exit $?.exitstatus unless $?.success?
 end
 
+# Output system information
+system 'df -kh'
+system 'find /tmp'
+
 def compute_directory_hash(path)
   Dir.glob("#{path}/**/*").map do |name|
     [name, File.mtime(name)].to_s
