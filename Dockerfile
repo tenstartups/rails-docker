@@ -46,6 +46,7 @@ RUN \
     linux-headers \
     nodejs \
     openssl-dev \
+    optipng \
     # https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
     readline-dev \
     rsync \
