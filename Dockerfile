@@ -39,6 +39,7 @@ RUN \
     imagemagick \
     libffi-dev \
     libgcrypt-dev \
+    libjpeg-turbo-utils \
     libpq \
     libxml2-dev \
     libxslt-dev \
