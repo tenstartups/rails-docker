@@ -4,7 +4,7 @@
 # http://github.com/tenstartups/railsapp-docker
 #
 
-FROM tenstartups/alpine:latest
+FROM alpine:latest
 
 MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 
@@ -19,11 +19,7 @@ ENV \
   BUNDLE_PATH=/usr/local/lib/ruby/bundler \
   BUNDLE_SILENCE_ROOT_WARNING=true \
   NOKOGIRI_USE_SYSTEM_LIBRARIES=true \
-  PAGER=more \
-  PG_VERSION=9.6.4 \
-  RUBY_MAJOR=2.4 \
-  RUBY_VERSION=2.4.1 \
-  RUBY_DOWNLOAD_SHA256=a330e10d5cb5e53b3a0078326c5731888bb55e32c4abfeb27d9e7f8e5d000250
+  PAGER=more
 
 # Install base packages.
 RUN \
@@ -39,14 +35,22 @@ RUN \
     imagemagick \
     libffi-dev \
     libgcrypt-dev \
-    libpq \
+    libressl-dev \
     libxml2-dev \
     libxslt-dev \
     linux-headers \
     nodejs \
-    openssl-dev \
-    # https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
+    postgresql \
+    postgresql-dev \
     readline-dev \
+    ruby \
+    ruby-bigdecimal \
+    ruby-dev \
+    ruby-io-console \
+    ruby-irb \
+    ruby-json \
+    ruby-nokogiri \
+    ruby-rake \
     rsync \
     tzdata \
     xz \
@@ -54,36 +58,6 @@ RUN \
     zlib-dev \
     && \
   rm -rf /var/cache/apk/*
-
-# Install postgresql
-RUN wget ftp://ftp.postgresql.org/pub/source/v${PG_VERSION}/postgresql-${PG_VERSION}.tar.bz2 -O /tmp/postgresql-${PG_VERSION}.tar.bz2 && \
-    tar xvfj /tmp/postgresql-${PG_VERSION}.tar.bz2 -C /tmp && \
-    cd /tmp/postgresql-${PG_VERSION} && \
-    ./configure --enable-integer-datetimes --enable-thread-safety --prefix=/usr/local --with-libedit-preferred --with-openssl && \
-    make world && \
-    make install world && \
-    make -C contrib install && \
-    cd /tmp/postgresql-${PG_VERSION}/contrib && \
-    make && make install && \
-    rm -r /tmp/postgresql-${PG_VERSION}*
-
-# Install ruby from source.
-RUN \
-  curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR}/ruby-${RUBY_VERSION}.tar.gz" && \
-  echo "${RUBY_DOWNLOAD_SHA256} *ruby.tar.gz" | sha256sum -c - && \
-  mkdir -p /usr/src && \
-  tar -xzf ruby.tar.gz -C /usr/src && \
-  mv "/usr/src/ruby-${RUBY_VERSION}" /usr/src/ruby && \
-  rm ruby.tar.gz && \
-  cd /usr/src/ruby && \
-  { echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new && mv file.c.new file.c && \
-  autoconf && \
-  # the configure script does not detect isnan/isinf as macros
-  ac_cv_func_isnan=yes ac_cv_func_isinf=yes ./configure --disable-install-doc && \
-  make -j"$(getconf _NPROCESSORS_ONLN)" && \
-  make install && \
-  gem update --system && \
-rm -r /usr/src/ruby
 
 # Install ruby gems.
 RUN \
