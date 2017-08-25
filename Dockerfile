@@ -4,13 +4,12 @@
 # http://github.com/tenstartups/railsapp-docker
 #
 
-FROM alpine:latest
+FROM tenstartups/alpine:latest
 
 MAINTAINER Marc Lennox <marc.lennox@gmail.com>
 
 # Set environment.
 ENV \
-  TERM=xterm-color \
   HOME=/home/rails \
   BUNDLE_DISABLE_SHARED_GEMS=false \
   BUNDLE_GIT__ALLOW_INSECURE=true \
@@ -51,7 +50,6 @@ RUN \
     ruby-json \
     ruby-nokogiri \
     ruby-rake \
-    rsync \
     tzdata \
     xz \
     yaml-dev \
