@@ -6,12 +6,12 @@
 
 FROM tenstartups/alpine:latest
 
-MAINTAINER Marc Lennox <marc.lennox@gmail.com>
+LABEL maintainer="Marc Lennox <marc.lennox@gmail.com>"
 
 # Set environment.
 ENV \
   HOME=/home/rails \
-  BUNDLE_DISABLE_SHARED_GEMS=false \
+  BUNDLE_DISABLE_SHARED_GEMS=true \
   BUNDLE_GIT__ALLOW_INSECURE=true \
   BUNDLE_IGNORE_MESSAGES=true \
   BUNDLE_JOBS=2 \
