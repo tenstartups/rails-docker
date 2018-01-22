@@ -75,9 +75,10 @@ ENV['RAILS_BUILD_ENVIRONMENTS'].split(',').each do |stage|
 
   puts "Pre-compiling #{stage} assets..."
   FileUtils.mv(assets_directory, './public/assets')
-  system ({ 'RAILS_ENV' => stage }), 'bundle exec rake assets:precompile'
+  system ({ 'RAILS_ENV' => stage }), 'bundle exec rails --tasks'
+  system ({ 'RAILS_ENV' => stage }), 'bundle exec rails assets:precompile'
   puts "Cleaning obsolete #{stage} compiled assets..."
-  system ({ 'RAILS_ENV' => stage }), 'bundle exec rake assets:clean'
+  system ({ 'RAILS_ENV' => stage }), 'bundle exec rails assets:clean'
   FileUtils.mv('./public/assets', assets_directory)
 
   # Update the remote cache tar if changed

@@ -94,7 +94,6 @@ ONBUILD ARG AWS_S3_BUCKET_NAME
 
 # Copy the rest of the application into place.
 ONBUILD ADD . /usr/src/app
-ONBUILD RUN find .
 
 # Execute scripts to bundle gem and compile assets
 ONBUILD RUN /usr/local/bin/bundle-gems
