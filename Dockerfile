@@ -1,7 +1,7 @@
 #
 # Rails application docker image
 #
-# http://github.com/tenstartups/railsapp-docker
+# http://github.com/tenstartups/rails-docker
 #
 
 FROM tenstartups/alpine:latest
@@ -35,6 +35,7 @@ RUN \
     libffi-dev \
     libgcrypt-dev \
     libressl-dev \
+    libsasl \
     libxml2-dev \
     libxslt-dev \
     linux-headers \
